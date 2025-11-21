@@ -96,9 +96,9 @@ async function demoAllFeatures() {
 
     // 12. File Selection Dialog - Multiple
     console.log("\n12. File Selection Dialog (Multiple)");
-    const files = await zenity.fileSelection({ 
+    const files = await zenity.fileSelection({
       multiple: true,
-      separator: "|" 
+      separator: "|"
     });
     console.log("Selected files:", files);
 
@@ -109,7 +109,7 @@ async function demoAllFeatures() {
 
     // 14. File Save Dialog
     console.log("\n14. File Save Dialog");
-    const saveFile = await zenity.fileSelection({ 
+    const saveFile = await zenity.fileSelection({
       save: true,
       confirmOverwrite: true,
       filename: "untitled.txt"
@@ -118,9 +118,9 @@ async function demoAllFeatures() {
 
     // 15. Color Selection
     console.log("\n15. Color Selection");
-    const color = await zenity.colorSelection({ 
+    const color = await zenity.colorSelection({
       color: "#FF5733",
-      showPalette: true 
+      showPalette: true
     });
     console.log("Selected color:", color);
 
@@ -163,9 +163,9 @@ async function demoAllFeatures() {
         { type: 'entry', label: 'Email' },
         { type: 'password', label: 'Password' }
       ],
-      { 
+      {
         text: "Please enter your information:",
-        separator: "|" 
+        separator: "|"
       }
     );
     console.log("Form data:", formData);
@@ -179,8 +179,8 @@ async function demoAllFeatures() {
         { type: 'multiline', label: 'Bio' },
         { type: 'calendar', label: 'Birth Date' },
         { type: 'combo', label: 'Gender', values: ['Male', 'Female', 'Other', 'Prefer not to say'] },
-        { 
-          type: 'list', 
+        {
+          type: 'list',
           label: 'Country',
           header: 'Select Country',
           values: ['USA', 'Canada', 'UK', 'Australia', 'Germany', 'France']
@@ -218,10 +218,10 @@ async function demoAllFeatures() {
 
     // 23. Progress Dialog - Pulsate
     console.log("\n23. Progress Dialog (Pulsate)");
-    const pulsateProcess = await zenity.progress("Processing...", { 
-      pulsate: true, 
-      autoClose: true, 
-      noCancel: true 
+    const pulsateProcess = await zenity.progress("Processing...", {
+      pulsate: true,
+      autoClose: true,
+      noCancel: true
     });
     setTimeout(() => {
       if (pulsateProcess.stdin && typeof pulsateProcess.stdin !== 'number') {
@@ -235,9 +235,9 @@ async function demoAllFeatures() {
 
     // 24. Progress Dialog - Percentage
     console.log("\n24. Progress Dialog (Percentage)");
-    const percentProcess = await zenity.progress("Loading...", { 
-      percentage: 0, 
-      autoClose: true 
+    const percentProcess = await zenity.progress("Loading...", {
+      percentage: 0,
+      autoClose: true
     });
     if (percentProcess.stdin && typeof percentProcess.stdin !== 'number') {
       const encoder = new TextEncoder();
@@ -252,33 +252,32 @@ async function demoAllFeatures() {
     console.log("Percentage progress completed");
 
     console.log("\n=== All Demos Completed! ===");
-    
+
   } catch (error) {
     console.error("Error:", error instanceof Error ? error.message : String(error));
   }
 }
 
-if(import.meta.main) {
-    const multilineForm = await zenity.forms(
-      [
-        { type: 'entry', label: 'Title' },
-        { type: 'multiline', label: 'Description' },
-        { type: 'entry', label: 'Tags' },
-         { type: 'calendar', label: 'Event Date' },
-         { type: 'combo', label: 'Category', values: ['Work', 'Personal', 'Other'] },
-         // Note: Zenity forms list does not support multiple selection or checklists
-         { type: 'list', label: 'Priority', header: 'Select Priority', values: ['Low', 'Medium', 'High'] },
-         { type: 'password', label: 'Access Code' },
+if (import.meta.main) {
+  const multilineForm = await zenity.forms(
+    [
+      { type: 'entry', label: 'Title' },
+      { type: 'multiline', label: 'Description' },
+      { type: 'entry', label: 'Tags' },
+      { type: 'calendar', label: 'Event Date' },
+      { type: 'combo', label: 'Category', values: ['Work', 'Personal', 'Other'] },
+      // Note: Zenity forms list does not support multiple selection or checklists
+      { type: 'list', label: 'Priority', header: 'Select Priority', values: ['Low', 'Medium', 'High'] },
+      { type: 'password', label: 'Access Code' },
 
-      ],
-      {
-        text: "Create a Post",
-        separator: "||",
-        title: "Post Creator",
-        height: 800,
-        width: 600
-      }
-    );
-    console.log("Multiline form data:", multilineForm);
-
+    ],
+    {
+      text: "Create a Post",
+      separator: "||",
+      title: "Post Creator",
+      height: 800,
+      width: 600
+    }
+  );
+  console.log("Multiline form data:", multilineForm);
 }

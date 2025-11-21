@@ -135,7 +135,6 @@ class Zenity {
   // Text Dialog
   async text(message: string, options: TextOptions = {}): Promise<string | null> {
     const args = ['--text-info'];
-    if (message) args.push(`--text=${message}`);
     if (options.filename) args.push(`--filename=${options.filename}`);
     if (options.editable) args.push('--editable');
     if (options.html || options.htmlMode) args.push('--html');
@@ -145,7 +144,7 @@ class Zenity {
     if (options.autoScroll) args.push('--auto-scroll');
     this.addCommonOptions(args, options);
     try {
-      return await this.run(args);
+      return await this.runWithInput(args, message);
     } catch (error) {
       // Exit code 1 means user cancelled
       return null;
@@ -495,6 +494,43 @@ class Zenity {
         stdin: spawnOptions.stdio?.[0] === 'pipe' ? 'pipe' : 'inherit',
         env: zenityEnv,
       });
+      
+      const stdout = await new Response(proc.stdout).text();
+      const exitCode = await proc.exited;
+      
+      if (exitCode === 0) {
+        return stdout.trim();
+      } else {
+        throw new Error(`Zenity exited with code ${exitCode}`);
+      }
+    } catch (error) {
+      throw new Error(`Failed to run zenity: ${(error as Error).message}`);
+    }
+  }
+
+  // Run Zenity command with input piped to stdin
+  private async runWithInput(args: string[], input: string): Promise<string> {
+    try {
+      const zenityEnv = {
+        ...Bun.env,
+        GSETTINGS_BACKEND: 'memory',
+        GSETTINGS_SCHEMA_DIR: '/dev/null',
+        G_MESSAGES_DEBUG: '',
+      };
+      
+      const proc = Bun.spawn(['zenity', ...args], {
+        stdout: 'pipe',
+        stderr: 'ignore',
+        stdin: 'pipe',
+        env: zenityEnv,
+      });
+      
+      // Write input to stdin
+      if (proc.stdin && typeof proc.stdin !== 'number') {
+        const encoder = new TextEncoder();
+        proc.stdin.write(encoder.encode(input));
+        proc.stdin.end();
+      }
       
       const stdout = await new Response(proc.stdout).text();
       const exitCode = await proc.exited;
