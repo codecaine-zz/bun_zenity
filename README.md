@@ -146,6 +146,52 @@ console.log(`Hello, ${name}!`);
 </tr>
 </table>
 
+### Controlling Multiline Input Height
+
+When using forms with multiline text fields, you can control the height by setting the `height` option on the dialog. Zenity automatically distributes the available space among form fields, with multiline fields receiving proportionally more vertical space.
+
+**How it works:**
+
+- Single-line fields (entry, password, combo) have a fixed height
+- Multiline fields expand to use the remaining available vertical space
+- The `height` parameter controls the overall dialog height, not individual fields
+
+**Example:**
+
+```typescript
+const zenity = new Zenity();
+
+// Small multiline area (default height)
+const result1 = await zenity.forms(
+  [
+    { type: 'entry', label: 'Title' },
+    { type: 'multiline', label: 'Description' },
+    { type: 'entry', label: 'Tags' }
+  ],
+  {
+    text: "Create a Post",
+    separator: "||"
+  }
+);
+
+// Large multiline area (increased height)
+const result2 = await zenity.forms(
+  [
+    { type: 'entry', label: 'Title' },
+    { type: 'multiline', label: 'Description' },
+    { type: 'entry', label: 'Tags' }
+  ],
+  {
+    text: "Create a Post",
+    separator: "||",
+    width: 600,
+    height: 800  // More dialog height = more space for multiline field
+  }
+);
+```
+
+**Note:** Zenity doesn't provide command-line options to control individual field heights. The layout is handled automatically based on the overall dialog dimensions.
+
 ## API Documentation
 
 See [ZENITY_API.md](./ZENITY_API.md) for complete API documentation with examples for all dialog types.
@@ -157,6 +203,7 @@ bun run demo.ts
 ```
 
 The demo showcases all available dialog types including:
+
 - Message dialogs (info, warning, error, question)
 - Input dialogs (entry, password, scale, calendar)
 - Selection dialogs (list, color picker)

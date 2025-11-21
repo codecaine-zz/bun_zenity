@@ -258,5 +258,6 @@ async function demoAllFeatures() {
   }
 }
 
-// Run all demos
-demoAllFeatures();
+if(import.meta.main) {
+  await demoAllFeatures();
+}
