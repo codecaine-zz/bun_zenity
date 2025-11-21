@@ -101,12 +101,16 @@ export interface ProgressOptions extends CommonOptions {
 export type FormField = 
   | { type: 'entry'; label: string; value?: string }
   | { type: 'password'; label: string }
+  | { type: 'multiline'; label: string; value?: string }
   | { type: 'calendar'; label: string }
-  | { type: 'list'; label: string; items?: string[] };
+  | { type: 'list'; label: string; header?: string; values?: string[]; columnValues?: string[] }
+  | { type: 'combo'; label: string; values?: string[] };
 
 export interface FormsOptions extends CommonOptions {
+  text?: string;
   separator?: string;
   formsDateFormat?: string;
+  showHeader?: boolean;
 }
 
 // Text dialog options
@@ -370,25 +374,45 @@ class Zenity {
   }
 
   // Forms Dialog
-  async forms(text: string, fields: FormField[], options: FormsOptions = {}): Promise<string[] | null> {
+  async forms(fields: FormField[], options: FormsOptions = {}): Promise<string[] | null> {
     const args = ['--forms'];
-    if (text) args.push(`--text=${text}`);
+    
+    // Add text if provided in options
+    if (options.text) args.push(`--text=${options.text}`);
     if (options.separator) args.push(`--separator=${options.separator}`);
     if (options.formsDateFormat) args.push(`--forms-date-format=${options.formsDateFormat}`);
+    if (options.showHeader) args.push('--show-header');
     this.addCommonOptions(args, options);
     
     fields.forEach(field => {
       if (field.type === 'entry') {
-        args.push('--add-entry', field.label);
-        if (field.value) args[args.length - 1] += `=${field.value}`;
+        args.push(`--add-entry=${field.label}`);
       } else if (field.type === 'password') {
-        args.push('--add-password', field.label);
+        args.push(`--add-password=${field.label}`);
+      } else if (field.type === 'multiline') {
+        args.push(`--add-multiline-entry=${field.label}`);
       } else if (field.type === 'calendar') {
-        args.push('--add-calendar', field.label);
+        args.push(`--add-calendar=${field.label}`);
       } else if (field.type === 'list') {
-        args.push('--add-list', field.label);
-        if (field.items) {
-          field.items.forEach(item => args.push('--list-values', item));
+        // Add list with header if provided, otherwise just label
+        const listArg = field.header ? `${field.label}:${field.header}` : field.label;
+        args.push(`--add-list=${listArg}`);
+        
+        // Add list values
+        if (field.values && field.values.length > 0) {
+          args.push(`--list-values=${field.values.join('|')}`);
+        }
+        
+        // Add column values
+        if (field.columnValues && field.columnValues.length > 0) {
+          args.push(`--column-values=${field.columnValues.join('|')}`);
+        }
+      } else if (field.type === 'combo') {
+        args.push(`--add-combo=${field.label}`);
+        
+        // Add combo values
+        if (field.values && field.values.length > 0) {
+          args.push(`--combo-values=${field.values.join('|')}`);
         }
       }
     });

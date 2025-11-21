@@ -136,6 +136,14 @@ console.log(`Hello, ${name}!`);
 <b>Text Editor</b>
 </td>
 </tr>
+<tr>
+<td align="center">
+<img src="screenshots/form_with_multientry_dialog.png" width="300" alt="Form with Multiline Entry"><br>
+<b>Form with Multiline Entry</b>
+</td>
+<td align="center">
+</td>
+</tr>
 </table>
 
 ## API Documentation

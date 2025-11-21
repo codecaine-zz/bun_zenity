@@ -158,40 +158,66 @@ async function demoAllFeatures() {
     // 19. Forms Dialog - Basic
     console.log("\n19. Forms Dialog (Basic)");
     const formData = await zenity.forms(
-      "Please enter your information:",
       [
         { type: 'entry', label: 'Name' },
         { type: 'entry', label: 'Email' },
         { type: 'password', label: 'Password' }
       ],
-      { separator: "|" }
+      { 
+        text: "Please enter your information:",
+        separator: "|" 
+      }
     );
     console.log("Form data:", formData);
 
-    // 20. Forms Dialog - Advanced
-    console.log("\n20. Forms Dialog (Advanced)");
+    // 20. Forms Dialog - Advanced with All Field Types
+    console.log("\n20. Forms Dialog (Advanced with All Field Types)");
     const advancedForm = await zenity.forms(
-      "Registration Form:",
       [
         { type: 'entry', label: 'Username' },
         { type: 'password', label: 'Password' },
+        { type: 'multiline', label: 'Bio' },
         { type: 'calendar', label: 'Birth Date' },
+        { type: 'combo', label: 'Gender', values: ['Male', 'Female', 'Other', 'Prefer not to say'] },
         { 
           type: 'list', 
-          label: 'Country', 
-          items: ['USA', 'Canada', 'UK', 'Australia'] 
+          label: 'Country',
+          header: 'Select Country',
+          values: ['USA', 'Canada', 'UK', 'Australia', 'Germany', 'France']
         }
-      ]
+      ],
+      {
+        text: "Registration Form:",
+        separator: "|",
+        formsDateFormat: "%Y-%m-%d",
+        showHeader: true
+      }
     );
     console.log("Advanced form data:", advancedForm);
 
-    // 21. Text Dialog
-    console.log("\n21. Text Dialog");
+    // 21. Forms Dialog - Multiline Entry Focus
+    console.log("\n21. Forms Dialog (Multiline Entry)");
+    const multilineForm = await zenity.forms(
+      [
+        { type: 'entry', label: 'Title' },
+        { type: 'multiline', label: 'Description' },
+        { type: 'entry', label: 'Tags' }
+      ],
+      {
+        text: "Create a Post",
+        separator: "||",
+        title: "Post Creator"
+      }
+    );
+    console.log("Multiline form data:", multilineForm);
+
+    // 22. Text Dialog
+    console.log("\n22. Text Dialog");
     const editedText = await zenity.text("This is a text information dialog.\n\nYou can edit and write in this text area.", { editable: true });
     console.log("Edited text:", editedText);
 
-    // 22. Progress Dialog - Pulsate
-    console.log("\n22. Progress Dialog (Pulsate)");
+    // 23. Progress Dialog - Pulsate
+    console.log("\n23. Progress Dialog (Pulsate)");
     const pulsateProcess = await zenity.progress("Processing...", { 
       pulsate: true, 
       autoClose: true, 
@@ -207,8 +233,8 @@ async function demoAllFeatures() {
     await pulsateProcess.exited;
     console.log("Pulsate progress completed");
 
-    // 23. Progress Dialog - Percentage
-    console.log("\n23. Progress Dialog (Percentage)");
+    // 24. Progress Dialog - Percentage
+    console.log("\n24. Progress Dialog (Percentage)");
     const percentProcess = await zenity.progress("Loading...", { 
       percentage: 0, 
       autoClose: true 

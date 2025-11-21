@@ -484,41 +484,80 @@ await progress.exited;
 
 ### Advanced Dialogs
 
-#### `forms(text: string, fields: FormField[], options?: FormsOptions): Promise<string[] | null>`
+#### `forms(fields: FormField[], options?: FormsOptions): Promise<string[] | null>`
 
 Displays a multi-field form dialog.
 
 **Parameters:**
-- `text` - The form title/description
 - `fields` - Array of form fields:
-  - `{ type: 'entry', label: string }` - Text entry field
-  - `{ type: 'password', label: string }` - Password field
+  - `{ type: 'entry', label: string }` - Single-line text entry field
+  - `{ type: 'password', label: string }` - Password field (hidden text)
+  - `{ type: 'multiline', label: string }` - Multi-line text entry field (Since Zenity 4.2)
   - `{ type: 'calendar', label: string }` - Date picker
-  - `{ type: 'list', label: string, items: string[] }` - Dropdown list
+  - `{ type: 'list', label: string, header?: string, values?: string[], columnValues?: string[] }` - List field with optional header and values
+  - `{ type: 'combo', label: string, values?: string[] }` - Combo box (dropdown) field
 - `options` (optional):
   - All common options, plus:
+  - `text?: string` - Form title/description text
   - `separator?: string` - Field separator in output (default: "|")
-  - `formsDateFormat?: string` - Date format for calendar fields
+  - `formsDateFormat?: string` - Date format for calendar fields (e.g., "%Y-%m-%d")
+  - `showHeader?: boolean` - Show column headers for list fields
 
 **Returns:** Array of values (one per field), or `null` if cancelled
 
-**Example:**
+**Examples:**
+
+**Basic Form:**
 ```typescript
 const data = await zenity.forms(
-  "User Registration",
   [
     { type: 'entry', label: 'Full Name' },
     { type: 'entry', label: 'Email' },
-    { type: 'password', label: 'Password' },
-    { type: 'calendar', label: 'Birth Date' },
-    { type: 'list', label: 'Country', items: ['USA', 'Canada', 'UK'] }
+    { type: 'password', label: 'Password' }
   ],
-  { separator: "|" }
+  { 
+    text: "User Registration",
+    separator: "|" 
+  }
 );
 
 if (data) {
-  const [name, email, password, birthDate, country] = data;
-  console.log({ name, email, password, birthDate, country });
+  const [name, email, password] = data;
+  console.log({ name, email, password });
+}
+```
+
+**Advanced Form with All Field Types:**
+```typescript
+const data = await zenity.forms(
+  [
+    { type: 'entry', label: 'Username' },
+    { type: 'password', label: 'Password' },
+    { type: 'multiline', label: 'Bio' },
+    { type: 'calendar', label: 'Birth Date' },
+    { 
+      type: 'combo', 
+      label: 'Gender', 
+      values: ['Male', 'Female', 'Other', 'Prefer not to say'] 
+    },
+    { 
+      type: 'list', 
+      label: 'Country',
+      header: 'Select Country',
+      values: ['USA', 'Canada', 'UK', 'Australia', 'Germany', 'France']
+    }
+  ],
+  {
+    text: "Complete Registration",
+    separator: "|",
+    formsDateFormat: "%Y-%m-%d",
+    showHeader: true
+  }
+);
+
+if (data) {
+  const [username, password, bio, birthDate, gender, country] = data;
+  console.log({ username, password, bio, birthDate, gender, country });
 }
 ```
 
@@ -648,12 +687,15 @@ interface CommonOptions {
 ```
 
 **FormField** - Union type for form fields:
+
 ```typescript
 type FormField = 
   | { type: 'entry'; label: string; value?: string }
   | { type: 'password'; label: string }
+  | { type: 'multiline'; label: string; value?: string }
   | { type: 'calendar'; label: string }
-  | { type: 'list'; label: string; items?: string[] };
+  | { type: 'list'; label: string; header?: string; values?: string[]; columnValues?: string[] }
+  | { type: 'combo'; label: string; values?: string[] };
 ```
 
 ---
