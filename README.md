@@ -195,6 +195,10 @@ const options: QuestionOptions = {
 };
 ```
 
+## Related Projects
+
+This Bun/TypeScript wrapper is inspired by the [Python Zenity Wrapper](https://github.com/codecaine-zz/python_zenity_wrapper), which provides similar functionality for Python applications. If you're working with Python instead of JavaScript/TypeScript, check it out!
+
 ## Project Info
 
 This project was created using `bun init` in bun v1.3.2. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
