@@ -196,6 +196,96 @@ const result2 = await zenity.forms(
 
 See [ZENITY_API.md](./ZENITY_API.md) for complete API documentation with examples for all dialog types.
 
+## Forms Collection
+
+The `FormCollection` class (`forms_collection.ts`) provides pre-built, developer-focused forms for common workflows. These forms combine multiple input types to collect structured data for various tasks.
+
+### Running the Forms Collection Demo
+
+```bash
+bun run forms_collection.ts
+```
+
+### Available Forms
+
+The collection includes 24+ ready-to-use forms organized by category:
+
+#### Project Setup
+
+- Package Initialization (npm/Bun packages)
+- TypeScript Configuration
+- Python Project Setup
+- Web Project Setup (React, Vue, etc.)
+
+#### Git & Version Control
+
+- Conventional Git Commits
+- Pull Requests
+- Release Versioning
+- .gitignore Generator
+
+#### Configuration Files
+
+- Environment Variables
+- ESLint/Prettier Config
+- VS Code Workspace Settings
+- Package.json Scripts
+
+#### Deployment & DevOps
+
+- Docker Container Config
+- GitHub Actions Workflows
+- SSH Configuration
+
+#### Database & Services
+
+- Database Connection Setup
+- API Configuration
+
+#### Documentation
+
+- README Generator
+- Changelog Entries
+- Blog Post Metadata
+
+#### Issue Tracking
+
+- Bug Reports
+- Feature Requests
+
+### Usage Example
+
+```typescript
+import { FormCollection } from './forms_collection';
+
+const forms = new FormCollection();
+
+// Collect package initialization data
+const pkgData = await forms.packageInit();
+console.log(pkgData);
+// {
+//   packageName: 'my-app',
+//   version: '0.1.0',
+//   description: 'My awesome app',
+//   author: 'Developer Name',
+//   license: 'MIT',
+//   runtime: 'Bun'
+// }
+
+// Collect git commit data
+const commit = await forms.gitCommit();
+console.log(commit);
+// {
+//   type: 'feat',
+//   scope: 'api',
+//   summary: 'Add user authentication',
+//   description: 'Implemented JWT-based auth',
+//   breaking: 'No'
+// }
+```
+
+All forms return structured objects with named fields, making it easy to integrate into scripts and automation workflows.
+
 ## Running the Demo
 
 ```bash
@@ -241,10 +331,6 @@ const options: QuestionOptions = {
   cancelLabel: "No"
 };
 ```
-
-## Related Projects
-
-This Bun/TypeScript wrapper is inspired by the [Python Zenity Wrapper](https://github.com/codecaine-zz/python_zenity_wrapper), which provides similar functionality for Python applications. If you're working with Python instead of JavaScript/TypeScript, check it out!
 
 ## Project Info
 

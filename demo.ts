@@ -259,5 +259,26 @@ async function demoAllFeatures() {
 }
 
 if(import.meta.main) {
-  await demoAllFeatures();
+    const multilineForm = await zenity.forms(
+      [
+        { type: 'entry', label: 'Title' },
+        { type: 'multiline', label: 'Description' },
+        { type: 'entry', label: 'Tags' },
+         { type: 'calendar', label: 'Event Date' },
+         { type: 'combo', label: 'Category', values: ['Work', 'Personal', 'Other'] },
+         // Note: Zenity forms list does not support multiple selection or checklists
+         { type: 'list', label: 'Priority', header: 'Select Priority', values: ['Low', 'Medium', 'High'] },
+         { type: 'password', label: 'Access Code' },
+
+      ],
+      {
+        text: "Create a Post",
+        separator: "||",
+        title: "Post Creator",
+        height: 800,
+        width: 600
+      }
+    );
+    console.log("Multiline form data:", multilineForm);
+
 }
