@@ -22,6 +22,7 @@ A comprehensive TypeScript/JavaScript wrapper for Zenity dialogs, making it easy
 npm install zenity-wrapper
 # or
 bun add zenity-wrapper
+# or simply copy zenity-wrapper.ts into your project
 ```
 
 **Prerequisites:** Zenity must be installed on your system.
@@ -54,6 +55,12 @@ await zenity.info("Hello, World!", { title: "Greeting" });
 // Question dialog
 const answer = await zenity.question("Do you want to continue?");
 console.log(answer); // true or false
+
+// Get user input
+const name = await zenity.entry("Enter your name:");
+if (name) {
+  console.log(`Hello, ${name}!`);
+}
 
 // With TypeScript types
 import { QuestionOptions } from './zenity-wrapper';
@@ -270,6 +277,14 @@ const date = await zenity.calendar("Select your birthday:", {
 console.log(`Birthday: ${date}`);
 ```
 
+**Date Format Specifiers:**
+- `%Y` - Year (4 digits)
+- `%m` - Month (01-12)
+- `%d` - Day (01-31)
+- `%B` - Full month name
+- `%A` - Full weekday name
+- See `strftime` documentation for more format options
+
 ---
 
 ### Selection Dialogs
@@ -349,10 +364,12 @@ Displays a color picker dialog.
 **Parameters:**
 - `options` (optional):
   - All common options, plus:
-  - `color?: string` - Initial color in hex format (e.g., "#FF5733")
+  - `color?: string` - Initial color in hex format (e.g., "#FF5733") or rgb format (e.g., "rgb(255,87,51)")
   - `showPalette?: boolean` - Show color palette
 
-**Returns:** Selected color in hex format (e.g., "rgb(255,87,51)"), or `null` if cancelled
+**Returns:** Selected color in rgb format (e.g., "rgb(255,87,51)"), or `null` if cancelled
+
+**Note:** The wrapper automatically converts hex colors to the RGB format required by Zenity (16-bit values 0-65535).
 
 **Example:**
 ```typescript
@@ -422,7 +439,7 @@ const savePath = await zenity.fileSelection({
 
 ### Progress Dialogs
 
-#### `progress(text: string, options?: ProgressOptions): Promise<Process>`
+#### `progress(text: string, options?: ProgressOptions): Promise<Subprocess>`
 
 Displays a progress dialog.
 
@@ -437,7 +454,7 @@ Displays a progress dialog.
   - `noCancel?: boolean` - Hide cancel button
   - `timeRemaining?: boolean` - Show estimated time remaining
 
-**Returns:** A `Process` object with `stdin` and `exited` properties
+**Returns:** A Bun `Subprocess` object with `stdin` and `exited` properties
 
 **Usage:**
 - Write percentage to stdin: `process.stdin.write("50\n")`
@@ -477,6 +494,31 @@ setTimeout(() => {
   progress.stdin.end();
 }, 3000);
 
+await progress.exited;
+```
+
+#### `updateProgress(process: Subprocess, percentage: number, text?: string): void`
+
+Helper method to update a progress dialog.
+
+**Parameters:**
+- `process` - The process object returned by `progress()`
+- `percentage` - Progress percentage (0-100)
+- `text` - Optional text to update the progress message
+
+**Example:**
+```typescript
+const progress = await zenity.progress("Loading...", {
+  percentage: 0,
+  autoClose: true
+});
+
+// Using the helper method
+zenity.updateProgress(progress, 25, "Processing files...");
+zenity.updateProgress(progress, 50, "Half way there...");
+zenity.updateProgress(progress, 100, "Complete!");
+
+progress.stdin.end();
 await progress.exited;
 ```
 
@@ -581,7 +623,16 @@ Displays a text information dialog with optional editing.
 
 **Returns:** The (possibly edited) text, or `null` if cancelled
 
-**Example:**
+**Examples:**
+
+**Display Text:**
+```typescript
+const result = await zenity.text(
+  "This is some information.\n\nRead-only text display."
+);
+```
+
+**Editable Text:**
 ```typescript
 const editedText = await zenity.text(
   "Edit this content...",
@@ -591,6 +642,14 @@ const editedText = await zenity.text(
 if (editedText) {
   console.log("User entered:", editedText);
 }
+```
+
+**Load from File:**
+```typescript
+const content = await zenity.text("", {
+  filename: "/path/to/file.txt",
+  editable: true
+});
 ```
 
 ---
