@@ -1,5 +1,5 @@
 // Complete demo of all Zenity wrapper functionality
-import Zenity from './zenity-wrapper';
+import Zenity from 'zenity-wrapper';
 
 const zenity = new Zenity();
 

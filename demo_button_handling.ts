@@ -1,9 +1,4 @@
- #!/usr/bin/env bun
-/**
- * Comprehensive demo showing the difference between OK, Cancel, and Extra buttons in forms
- */
-
-import Zenity from './zenity-wrapper';
+import Zenity from 'zenity-wrapper';
 
 const zenity = new Zenity();
 

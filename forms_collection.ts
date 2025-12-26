@@ -1,4 +1,4 @@
-import Zenity from './zenity-wrapper';
+import Zenity from 'zenity-wrapper';
 
 export class FormCollection {
   private zenity: Zenity;

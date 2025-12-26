@@ -3,7 +3,7 @@
  * Test to demonstrate distinguishing between Cancel and Extra button in forms
  */
 
-import Zenity from './zenity-wrapper';
+import Zenity from 'zenity-wrapper';
 
 const zenity = new Zenity();
 
