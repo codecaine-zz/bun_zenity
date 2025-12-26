@@ -258,25 +258,190 @@ async function demoAllFeatures() {
   }
 }
 
+const optionMatrix = {
+  info: ['title'],
+  warning: ['title'],
+  error: ['title'],
+  question: ['title', 'okLabel', 'cancelLabel'],
+  entry: ['entryText', 'hideText'],
+  password: ['username'],
+  list: ['checklist', 'multiple', 'radiolist'],
+  fileSelection: ['multiple', 'separator', 'directory', 'save', 'confirmOverwrite', 'filename'],
+  colorSelection: ['color', 'showPalette'],
+  calendar: ['day', 'month', 'year', 'dateFormat'],
+  scale: ['value', 'minValue', 'maxValue', 'step', 'hideValue'],
+  forms: ['text', 'separator', 'formsDateFormat', 'showHeader', 'title', 'height', 'width'],
+  progress: ['pulsate', 'autoClose', 'noCancel', 'percentage'],
+  text: ['editable']
+} as const;
+
+async function runSimpleWizard() {
+  const choice = await zenity.list(
+    "Pick an action to run",
+    ["Select", "Action"],
+    [
+      [true, "Info"], [false, "Warning"], [false, "Error"], [false, "Question"],
+      [false, "Entry"], [false, "Password"], [false, "Simple List"], [false, "Checklist"],
+      [false, "Radio List"], [false, "Open File"], [false, "Save File"], [false, "Choose Folder"],
+      [false, "Pick Color"], [false, "Pick Date"], [false, "Scale"], [false, "Basic Form"],
+      [false, "Editable Text"], [false, "Pulsate Progress"], [false, "Percent Progress"]
+    ],
+    { radiolist: true }
+  );
+  if (!choice) return;
+
+  switch (choice) {
+    case "Info":
+      await zenity.info("Hello from Zenity!", { title: "Info" });
+      break;
+    case "Warning":
+      await zenity.warning("Be careful!", { title: "Warning" });
+      break;
+    case "Error":
+      await zenity.error("Something went wrong.", { title: "Error" });
+      break;
+    case "Question": {
+      const ok = await zenity.question("Do you agree?", { title: "Question", okLabel: "Yes", cancelLabel: "No" });
+      console.log("Answered:", ok ? "Yes" : "No");
+      break;
+    }
+    case "Entry": {
+      const text = await zenity.entry("Type something:", { entryText: "Default text" });
+      console.log("Entry:", text);
+      break;
+    }
+    case "Password": {
+      const secret = await zenity.password({ username: true });
+      console.log("Password entered:", secret ? "***hidden***" : "cancelled");
+      break;
+    }
+    case "Simple List": {
+      const picked = await zenity.list("Pick one fruit", ["Fruit"], [["Apple"], ["Banana"], ["Orange"]]);
+      console.log("Picked:", picked);
+      break;
+    }
+    case "Checklist": {
+      const picked = await zenity.list(
+        "Pick fruits",
+        ["Select", "Fruit"],
+        [[false, "Apple"], [false, "Banana"], [false, "Orange"]],
+        { checklist: true, multiple: true }
+      );
+      console.log("Picked:", picked);
+      break;
+    }
+    case "Radio List": {
+      const picked = await zenity.list(
+        "Pick OS",
+        ["Select", "OS"],
+        [[true, "Linux"], [false, "macOS"], [false, "Windows"]],
+        { radiolist: true }
+      );
+      console.log("Picked:", picked);
+      break;
+    }
+    case "Open File": {
+      const f = await zenity.fileSelection({ multiple: false });
+      console.log("File:", f);
+      break;
+    }
+    case "Save File": {
+      const f = await zenity.fileSelection({ save: true, confirmOverwrite: true, filename: "untitled.txt" });
+      console.log("Save to:", f);
+      break;
+    }
+    case "Choose Folder": {
+      const d = await zenity.fileSelection({ directory: true });
+      console.log("Folder:", d);
+      break;
+    }
+    case "Pick Color": {
+      const c = await zenity.colorSelection({ color: "#FF5733", showPalette: true });
+      console.log("Color:", c);
+      break;
+    }
+    case "Pick Date": {
+      const d = await zenity.calendar("Select a date", { dateFormat: "%Y-%m-%d" });
+      console.log("Date:", d);
+      break;
+    }
+    case "Scale": {
+      const v = await zenity.scale("Set a value", { value: 50, minValue: 0, maxValue: 100, step: 5 });
+      console.log("Value:", v);
+      break;
+    }
+    case "Basic Form": {
+      const data = await zenity.forms(
+        [
+          { type: 'entry', label: 'Name' },
+          { type: 'entry', label: 'Email' },
+          { type: 'password', label: 'Password' },
+          { type: 'combo', label: 'Role', values: ['User', 'Admin', 'Guest'] }
+        ],
+        { text: "Fill the form", separator: "|", showHeader: true, title: "Form" }
+      );
+      console.log("Form:", data);
+      break;
+    }
+    case "Editable Text": {
+      const t = await zenity.text("Edit this text.", { editable: true });
+      console.log("Text:", t);
+      break;
+    }
+    case "Pulsate Progress": {
+      const proc = await zenity.progress("Working...", { pulsate: true, autoClose: true, noCancel: true });
+      setTimeout(() => {
+        if (proc.stdin && typeof proc.stdin !== 'number') proc.stdin.end();
+      }, 1500);
+      await proc.exited;
+      console.log("Done.");
+      break;
+    }
+    case "Percent Progress": {
+      const proc = await zenity.progress("Loading...", { percentage: 0, autoClose: true });
+      if (proc.stdin && typeof proc.stdin !== 'number') {
+        const enc = new TextEncoder();
+        for (let i = 0; i <= 100; i += 20) {
+          proc.stdin.write(enc.encode(`${i}\n`));
+          proc.stdin.write(enc.encode(`# ${i}%\n`));
+        }
+        proc.stdin.end();
+      }
+      await proc.exited;
+      console.log("Done.");
+      break;
+    }
+  }
+}
+
 if (import.meta.main) {
+  console.log("\n=== Option matrix (dialog -> options) ===");
+  console.table(optionMatrix);
+  await runSimpleWizard();
   const multilineForm = await zenity.forms(
     [
       { type: 'entry', label: 'Title' },
-      { type: 'multiline', label: 'Description' },
       { type: 'entry', label: 'Tags' },
+      { type: 'password', label: 'Access Code' },
+      { type: 'multiline', label: 'Description' },
       { type: 'calendar', label: 'Event Date' },
       { type: 'combo', label: 'Category', values: ['Work', 'Personal', 'Other'] },
-      // Note: Zenity forms list does not support multiple selection or checklists
-      { type: 'list', label: 'Priority', header: 'Select Priority', values: ['Low', 'Medium', 'High'] },
-      { type: 'password', label: 'Access Code' },
-
+      {
+        type: 'list',
+        label: 'Priority',
+        header: 'Select Priority',
+        values: ['Low', 'Medium', 'High']
+      }
     ],
     {
       text: "Create a Post",
       separator: "||",
       title: "Post Creator",
       height: 800,
-      width: 600
+      width: 600,
+      showHeader: true,
+      formsDateFormat: "%Y-%m-%d"
+      // Centering is controlled by the window manager; Zenity has no center flag.
     }
   );
   console.log("Multiline form data:", multilineForm);
