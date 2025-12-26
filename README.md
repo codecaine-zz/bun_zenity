@@ -53,7 +53,51 @@ if (confirm) {
 // Get user input
 const name = await zenity.entry("Enter your name:");
 console.log(`Hello, ${name}!`);
+
+// Forms with button differentiation (NEW!)
+const result = await zenity.forms(
+  [
+    { type: 'entry', label: 'Name' },
+    { type: 'entry', label: 'Email' }
+  ],
+  {
+    title: 'Contact Info',
+    extraButton: 'Skip'  // Optional third button
+  }
+);
+
+// Now you can distinguish which button was clicked
+if (result.button === 'ok') {
+  console.log('Submitted:', result.values);
+} else if (result.button === 'extra') {
+  console.log('User clicked Skip button');
+} else {
+  console.log('User cancelled');
+}
 ```
+
+### Breaking Change in Forms API
+
+**⚠️ Important:** The `forms()` method now returns a `FormsResult` object instead of `string[] | null`.
+
+**Before:**
+```typescript
+const values = await zenity.forms([...], options);
+if (values) {
+  console.log(values);
+}
+```
+
+**After:**
+```typescript
+const result = await zenity.forms([...], options);
+if (result.button === 'ok' && result.values) {
+  console.log(result.values);
+}
+```
+
+This change allows you to distinguish between Cancel and Extra button clicks, which was previously impossible.
+
 
 ## Screenshots
 

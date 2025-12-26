@@ -19,6 +19,14 @@ export class FormCollection {
     return output;
   }
 
+  /**
+   * Helper to handle forms result with button information
+   */
+  private handleFormsResult(result: { button: 'ok' | 'cancel' | 'extra'; values: string[] | null }, keys: string[]) {
+    if (result.button === 'cancel' || !result.values) return null;
+    return this.parseResult(result.values, keys);
+  }
+
   // ============================================================
   // PROJECT INITIALIZATION
   // ============================================================
@@ -37,7 +45,7 @@ export class FormCollection {
       { type: 'combo', label: 'Runtime', values: ['Bun', 'Node', 'Deno'] }
     ], { title });
 
-    return this.parseResult(result, ['packageName', 'version', 'description', 'author', 'license', 'runtime']);
+    return this.handleFormsResult(result, ['packageName', 'version', 'description', 'author', 'license', 'runtime']);
   }
 
   /**
@@ -53,7 +61,7 @@ export class FormCollection {
       { type: 'entry', label: 'Root Directory', value: './src' }
     ], { title });
 
-    return this.parseResult(result, ['target', 'module', 'strict', 'outDir', 'rootDir']);
+    return this.handleFormsResult(result, ['target', 'module', 'strict', 'outDir', 'rootDir']);
   }
 
   /**
@@ -69,7 +77,7 @@ export class FormCollection {
       { type: 'combo', label: 'Use Virtual Env', values: ['Yes', 'No'] }
     ], { title });
 
-    return this.parseResult(result, ['projectName', 'pythonVersion', 'packageManager', 'framework', 'useVenv']);
+    return this.handleFormsResult(result, ['projectName', 'pythonVersion', 'packageManager', 'framework', 'useVenv']);
   }
 
   /**
@@ -85,7 +93,7 @@ export class FormCollection {
       { type: 'combo', label: 'Linter', values: ['ESLint + Prettier', 'Biome', 'None'] }
     ], { title });
 
-    return this.parseResult(result, ['projectName', 'framework', 'typescript', 'styling', 'linter']);
+    return this.handleFormsResult(result, ['projectName', 'framework', 'typescript', 'styling', 'linter']);
   }
 
   // ============================================================
@@ -105,7 +113,7 @@ export class FormCollection {
       { type: 'combo', label: 'Breaking Change', values: ['No', 'Yes'] }
     ], { title });
 
-    return this.parseResult(result, ['type', 'scope', 'summary', 'description', 'breaking']);
+    return this.handleFormsResult(result, ['type', 'scope', 'summary', 'description', 'breaking']);
   }
 
   /**
@@ -121,7 +129,7 @@ export class FormCollection {
       { type: 'entry', label: 'Reviewers (comma separated)' }
     ], { title });
 
-    return this.parseResult(result, ['title', 'type', 'description', 'closes', 'reviewers']);
+    return this.handleFormsResult(result, ['title', 'type', 'description', 'closes', 'reviewers']);
   }
 
   /**
@@ -136,7 +144,7 @@ export class FormCollection {
       { type: 'multiline', label: 'Changelog Summary' }
     ], { title });
 
-    return this.parseResult(result, ['currentVersion', 'type', 'newVersion', 'changelog']);
+    return this.handleFormsResult(result, ['currentVersion', 'type', 'newVersion', 'changelog']);
   }
 
   /**
@@ -151,7 +159,7 @@ export class FormCollection {
       { type: 'combo', label: 'OS', values: ['macOS', 'Linux', 'Windows', 'All'] },
       { type: 'entry', label: 'Extra Patterns (comma separated)' }
     ], { title });
-    return this.parseResult(result, ['language', 'framework', 'editor', 'os', 'extras']);
+    return this.handleFormsResult(result, ['language', 'framework', 'editor', 'os', 'extras']);
   }
 
   // ============================================================
@@ -167,7 +175,7 @@ export class FormCollection {
       { type: 'combo', label: 'Environment', values: ['Development', 'Staging', 'Production', 'Test'] },
       { type: 'multiline', label: 'Variables (KEY=VALUE per line)' }
     ], { title });
-    return this.parseResult(result, ['environment', 'variables']);
+    return this.handleFormsResult(result, ['environment', 'variables']);
   }
 
   /**
@@ -182,7 +190,7 @@ export class FormCollection {
       { type: 'combo', label: 'Tab Width', values: ['2', '4'] },
       { type: 'combo', label: 'Print Width', values: ['80', '100', '120'] }
     ], { title });
-    return this.parseResult(result, ['semi', 'singleQuote', 'trailingComma', 'tabWidth', 'printWidth']);
+    return this.handleFormsResult(result, ['semi', 'singleQuote', 'trailingComma', 'tabWidth', 'printWidth']);
   }
 
   /**
@@ -197,7 +205,7 @@ export class FormCollection {
       { type: 'combo', label: 'Trim Trailing Whitespace', values: ['true', 'false'] },
       { type: 'combo', label: 'Auto Save', values: ['afterDelay', 'onFocusChange', 'off'] }
     ], { title });
-    return this.parseResult(result, ['formatOnSave', 'tabSize', 'insertSpaces', 'trimWhitespace', 'autoSave']);
+    return this.handleFormsResult(result, ['formatOnSave', 'tabSize', 'insertSpaces', 'trimWhitespace', 'autoSave']);
   }
 
   /**
@@ -212,7 +220,7 @@ export class FormCollection {
       { type: 'entry', label: 'lint', value: 'eslint .' },
       { type: 'entry', label: 'format', value: 'prettier --write .' }
     ], { title });
-    return this.parseResult(result, ['dev', 'build', 'test', 'lint', 'format']);
+    return this.handleFormsResult(result, ['dev', 'build', 'test', 'lint', 'format']);
   }
 
   // ============================================================
@@ -232,7 +240,7 @@ export class FormCollection {
       { type: 'combo', label: 'Restart Policy', values: ['unless-stopped', 'always', 'on-failure', 'no'] }
     ], { title });
 
-    return this.parseResult(result, ['containerName', 'image', 'ports', 'volumes', 'restart']);
+    return this.handleFormsResult(result, ['containerName', 'image', 'ports', 'volumes', 'restart']);
   }
 
   /**
@@ -247,7 +255,7 @@ export class FormCollection {
       { type: 'entry', label: 'Node Version', value: '20' },
       { type: 'multiline', label: 'Custom Steps (optional)' }
     ], { title });
-    return this.parseResult(result, ['name', 'trigger', 'os', 'nodeVersion', 'steps']);
+    return this.handleFormsResult(result, ['name', 'trigger', 'os', 'nodeVersion', 'steps']);
   }
 
   /**
@@ -262,7 +270,7 @@ export class FormCollection {
       { type: 'entry', label: 'Port', value: '22' },
       { type: 'entry', label: 'Identity File', value: '~/.ssh/id_rsa' }
     ], { title });
-    return this.parseResult(result, ['host', 'hostname', 'user', 'port', 'identityFile']);
+    return this.handleFormsResult(result, ['host', 'hostname', 'user', 'port', 'identityFile']);
   }
 
   // ============================================================
@@ -284,7 +292,7 @@ export class FormCollection {
       { type: 'combo', label: 'SSL', values: ['false', 'true', 'require'] }
     ], { title });
 
-    return this.parseResult(result, ['type', 'host', 'port', 'database', 'username', 'password', 'ssl']);
+    return this.handleFormsResult(result, ['type', 'host', 'port', 'database', 'username', 'password', 'ssl']);
   }
 
   /**
@@ -300,7 +308,7 @@ export class FormCollection {
       { type: 'entry', label: 'Rate Limit (req/min)', value: '60' }
     ], { title });
 
-    return this.parseResult(result, ['service', 'apiKey', 'baseUrl', 'environment', 'rateLimit']);
+    return this.handleFormsResult(result, ['service', 'apiKey', 'baseUrl', 'environment', 'rateLimit']);
   }
 
   // ============================================================
@@ -319,7 +327,7 @@ export class FormCollection {
       { type: 'multiline', label: 'Usage Example' },
       { type: 'combo', label: 'License', values: ['MIT', 'Apache-2.0', 'GPL-3.0', 'ISC', 'Unlicense'] }
     ], { title });
-    return this.parseResult(result, ['projectName', 'description', 'installation', 'usage', 'license']);
+    return this.handleFormsResult(result, ['projectName', 'description', 'installation', 'usage', 'license']);
   }
 
   /**
@@ -335,7 +343,7 @@ export class FormCollection {
       { type: 'multiline', label: 'Fixed' },
       { type: 'multiline', label: 'Removed' }
     ], { title });
-    return this.parseResult(result, ['version', 'date', 'added', 'changed', 'fixed', 'removed']);
+    return this.handleFormsResult(result, ['version', 'date', 'added', 'changed', 'fixed', 'removed']);
   }
 
   /**
@@ -352,7 +360,7 @@ export class FormCollection {
       { type: 'combo', label: 'Draft', values: ['true', 'false'] }
     ], { title });
 
-    return this.parseResult(result, ['title', 'author', 'category', 'tags', 'publishDate', 'draft']);
+    return this.handleFormsResult(result, ['title', 'author', 'category', 'tags', 'publishDate', 'draft']);
   }
 
   // ============================================================
@@ -373,7 +381,7 @@ export class FormCollection {
       { type: 'multiline', label: 'Actual Behavior' }
     ], { title });
 
-    return this.parseResult(result, ['title', 'severity', 'type', 'steps', 'expected', 'actual']);
+    return this.handleFormsResult(result, ['title', 'severity', 'type', 'steps', 'expected', 'actual']);
   }
 
   /**
@@ -389,7 +397,7 @@ export class FormCollection {
       { type: 'multiline', label: 'Use Case' }
     ], { title });
 
-    return this.parseResult(result, ['title', 'priority', 'category', 'description', 'useCase']);
+    return this.handleFormsResult(result, ['title', 'priority', 'category', 'description', 'useCase']);
   }
 }
 

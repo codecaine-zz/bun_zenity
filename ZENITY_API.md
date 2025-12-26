@@ -526,7 +526,7 @@ await progress.exited;
 
 ### Advanced Dialogs
 
-#### `forms(fields: FormField[], options?: FormsOptions): Promise<string[] | null>`
+#### `forms(fields: FormField[], options?: FormsOptions): Promise<FormsResult>`
 
 Displays a multi-field form dialog.
 
@@ -545,13 +545,19 @@ Displays a multi-field form dialog.
   - `formsDateFormat?: string` - Date format for calendar fields (e.g., "%Y-%m-%d")
   - `showHeader?: boolean` - Show column headers for list fields
 
-**Returns:** Array of values (one per field), or `null` if cancelled
+**Returns:** `FormsResult` object with:
+- `button: 'ok' | 'cancel' | 'extra'` - Which button was clicked
+- `values: string[] | null` - Array of field values (null if cancelled or extra button clicked)
+
+This allows you to distinguish between the user clicking OK, Cancel, or the extra button (if configured).
+
+**Note:** When the extra button is clicked, Zenity does not return form values, only the button label. The `values` field will be `null` for extra button clicks.
 
 **Examples:**
 
 **Basic Form:**
 ```typescript
-const data = await zenity.forms(
+const result = await zenity.forms(
   [
     { type: 'entry', label: 'Full Name' },
     { type: 'entry', label: 'Email' },
@@ -563,15 +569,40 @@ const data = await zenity.forms(
   }
 );
 
-if (data) {
-  const [name, email, password] = data;
+if (result.button === 'ok' && result.values) {
+  const [name, email, password] = result.values;
   console.log({ name, email, password });
+}
+```
+
+**Form with Extra Button:**
+```typescript
+const result = await zenity.forms(
+  [
+    { type: 'entry', label: 'Name' },
+    { type: 'entry', label: 'Email' }
+  ],
+  {
+    title: 'Contact Info',
+    okLabel: 'Submit',
+    cancelLabel: 'Cancel',
+    extraButton: 'Skip'
+  }
+);
+
+if (result.button === 'ok') {
+  console.log('User submitted:', result.values);
+} else if (result.button === 'extra') {
+  console.log('User skipped the form');
+  // Note: values will be null when extra button is clicked
+} else {
+  console.log('User cancelled');
 }
 ```
 
 **Advanced Form with All Field Types:**
 ```typescript
-const data = await zenity.forms(
+const result = await zenity.forms(
   [
     { type: 'entry', label: 'Username' },
     { type: 'password', label: 'Password' },
@@ -597,7 +628,7 @@ const data = await zenity.forms(
   }
 );
 
-if (data) {
+if (result.button === 'ok' && result.values) {
   const [username, password, bio, birthDate, gender, country] = data;
   console.log({ username, password, bio, birthDate, gender, country });
 }
@@ -724,6 +755,7 @@ import Zenity, {
   // Advanced dialog options
   FormField,
   FormsOptions,
+  FormsResult,
   TextOptions
 } from './zenity-wrapper';
 ```
@@ -742,6 +774,15 @@ interface CommonOptions {
   extraButton?: string;
   modalHint?: boolean;
   attachParent?: number;
+}
+```
+
+**FormsResult** - Return type for forms dialog:
+
+```typescript
+interface FormsResult {
+  button: 'ok' | 'cancel' | 'extra';
+  values: string[] | null;
 }
 ```
 

@@ -113,6 +113,12 @@ export interface FormsOptions extends CommonOptions {
   showHeader?: boolean;
 }
 
+export interface FormsResult {
+  button: 'ok' | 'cancel' | 'extra';
+  values: string[] | null;
+}
+
+
 // Text dialog options
 export interface TextOptions extends CommonOptions {
   filename?: string;
@@ -373,7 +379,7 @@ class Zenity {
   }
 
   // Forms Dialog
-  async forms(fields: FormField[], options: FormsOptions = {}): Promise<string[] | null> {
+  async forms(fields: FormField[], options: FormsOptions = {}): Promise<FormsResult> {
     const args = ['--forms'];
     
     // Add text if provided in options
@@ -417,15 +423,52 @@ class Zenity {
     });
     
     try {
-      const result = await this.run(args);
-      if (result) {
-        const separator = options.separator || '|';
-        return result.split(separator);
+      const result = await this.runWithExitCode(args);
+      const separator = options.separator || '|';
+      
+      if (result.exitCode === 0) {
+        // OK button clicked
+        return {
+          button: 'ok',
+          values: result.output.split(separator)
+        };
+      } else if (result.exitCode === 1 && result.output) {
+        // Exit code 1 with output - check if it's the extra button label
+        // If the output matches the extra button text, it's the extra button
+        // Otherwise it might be form data from a different scenario
+        if (options.extraButton && result.output === options.extraButton) {
+          // Extra button clicked - output is just the button label, no form values
+          return {
+            button: 'extra',
+            values: null
+          };
+        } else if (result.output.includes(separator) || !options.extraButton) {
+          // Has separator or no extra button defined, treat as form data with exit code 1
+          // This can happen in some edge cases
+          return {
+            button: 'ok',
+            values: result.output.split(separator)
+          };
+        } else {
+          // Unknown case, treat as cancel
+          return {
+            button: 'cancel',
+            values: null
+          };
+        }
+      } else {
+        // Cancel button clicked (exit code 1 with no output) or any other exit code
+        return {
+          button: 'cancel',
+          values: null
+        };
       }
-      return null;
     } catch (error) {
-      // Exit code 1 means user cancelled
-      return null;
+      // Error occurred
+      return {
+        button: 'cancel',
+        values: null
+      };
     }
   }
 
@@ -503,6 +546,32 @@ class Zenity {
       } else {
         throw new Error(`Zenity exited with code ${exitCode}`);
       }
+    } catch (error) {
+      throw new Error(`Failed to run zenity: ${(error as Error).message}`);
+    }
+  }
+
+  // Run Zenity command and return both output and exit code
+  private async runWithExitCode(args: string[], spawnOptions: SpawnOptions = {}): Promise<{ output: string; exitCode: number }> {
+    try {
+      const zenityEnv = {
+        ...Bun.env,
+        GSETTINGS_BACKEND: 'memory',
+        GSETTINGS_SCHEMA_DIR: '/dev/null',
+        G_MESSAGES_DEBUG: '',
+      };
+      
+      const proc = Bun.spawn(['zenity', ...args], {
+        stdout: 'pipe',
+        stderr: 'ignore',
+        stdin: spawnOptions.stdio?.[0] === 'pipe' ? 'pipe' : 'inherit',
+        env: zenityEnv,
+      });
+      
+      const stdout = await new Response(proc.stdout).text();
+      const exitCode = await proc.exited;
+      
+      return { output: stdout.trim(), exitCode };
     } catch (error) {
       throw new Error(`Failed to run zenity: ${(error as Error).message}`);
     }
