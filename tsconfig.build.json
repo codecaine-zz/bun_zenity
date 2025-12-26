@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "outDir": "./dist",
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": false,
+    "types": ["bun"]
+  },
+  "include": [
+    "zenity-wrapper.ts"
+  ]
+}

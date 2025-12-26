@@ -21,14 +21,23 @@ sudo dnf install zenity
 
 ## Installation
 
+Install from npm once published:
+
 ```bash
-bun install
+# With Bun
+bun add zenity-wrapper
+
+# With npm
+npm install zenity-wrapper
+
+# With pnpm
+pnpm add zenity-wrapper
 ```
 
 ## Usage
 
 ```typescript
-import Zenity from './zenity-wrapper';
+import Zenity from 'zenity-wrapper';
 
 const zenity = new Zenity();
 
@@ -335,3 +344,23 @@ const options: QuestionOptions = {
 ## Project Info
 
 This project was created using `bun init` in bun v1.3.2. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+## Publishing
+
+To publish the package to npm:
+
+```bash
+# Build the package
+bun run build
+
+# Login to npm if needed
+npm login
+
+# Publish
+npm publish --access public
+
+# Alternatively, using Bun
+bun publish
+```
+
+If the name `zenity-wrapper` is taken on npm, update the `name` field in `package.json` before publishing.

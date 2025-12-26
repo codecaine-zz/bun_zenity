@@ -1,12 +1,48 @@
 {
-  "name": "bun_zenity",
-  "module": "demo.ts",
+  "name": "zenity-wrapper",
+  "version": "0.1.0",
+  "description": "Bun-powered Zenity dialog wrapper for macOS/Linux",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "private": false,
+  "exports": {
+    ".": {
+      "types": "./dist/zenity-wrapper.d.ts",
+      "default": "./dist/zenity-wrapper.js"
+    }
   },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+  "main": "./dist/zenity-wrapper.js",
+  "types": "./dist/zenity-wrapper.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "ZENITY_API.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codecaine-zz/bun_zenity.git"
+  },
+  "keywords": [
+    "zenity",
+    "bun",
+    "dialogs",
+    "gtk",
+    "macos",
+    "linux"
+  ],
+  "author": "",
+  "license": "MIT"
 }
