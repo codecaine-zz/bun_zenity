@@ -1,6 +1,6 @@
 {
   "name": "zenity-wrapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bun-powered Zenity dialog wrapper for macOS/Linux",
   "type": "module",
   "private": false,

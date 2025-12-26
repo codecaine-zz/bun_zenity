@@ -627,3 +627,4 @@ class Zenity {
 }
 
 export default Zenity;
+export { Zenity };
