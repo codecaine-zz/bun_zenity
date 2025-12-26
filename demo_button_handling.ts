@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+ #!/usr/bin/env bun
 /**
  * Comprehensive demo showing the difference between OK, Cancel, and Extra buttons in forms
  */

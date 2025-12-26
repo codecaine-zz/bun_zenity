@@ -415,34 +415,44 @@ async function runSimpleWizard() {
 }
 
 if (import.meta.main) {
-  console.log("\n=== Option matrix (dialog -> options) ===");
-  console.table(optionMatrix);
-  await runSimpleWizard();
-  const multilineForm = await zenity.forms(
+  const result = await zenity.forms(
     [
-      { type: 'entry', label: 'Title' },
-      { type: 'entry', label: 'Tags' },
-      { type: 'password', label: 'Access Code' },
-      { type: 'multiline', label: 'Description' },
-      { type: 'calendar', label: 'Event Date' },
-      { type: 'combo', label: 'Category', values: ['Work', 'Personal', 'Other'] },
+      // default value entry
+      { type: 'entry', label: 'Username'},
+      { type: 'password', label: 'Password' },
+      { type: 'multiline', label: 'Bio' },
+      { type: 'calendar', label: 'Birth Date' },
+      {
+        type: 'combo',
+        label: 'Gender',
+        values: ['Male', 'Female', 'Other', 'Prefer not to say']
+      },
       {
         type: 'list',
-        label: 'Priority',
-        header: 'Select Priority',
-        values: ['Low', 'Medium', 'High']
+        label: 'Country',
+        header: 'Select Country',
+        values: ['USA', 'Canada', 'UK', 'Australia', 'Germany', 'France']
       }
     ],
     {
-      text: "Create a Post",
-      separator: "||",
-      title: "Post Creator",
+      text: "Complete Registration",
+      separator: "|",
+      formsDateFormat: "%Y-%m-%d",
+      showHeader: true,
+      title: "User Registration",
       height: 800,
       width: 600,
-      showHeader: true,
-      formsDateFormat: "%Y-%m-%d"
-      // Centering is controlled by the window manager; Zenity has no center flag.
+      extraButton: "Skip"
     }
   );
-  console.log("Multiline form data:", multilineForm);
+
+  if (result.button === 'ok' && result.values) {
+    const [username, password, bio, birthDate, gender, country] = result.values;
+    console.log({ username, password, bio, birthDate, gender, country });
+  }
+  else if (result.button === 'extra') {
+    console.log("User chose to skip the registration.");
+  } else {
+    console.log("Form was cancelled or closed.");
+  }
 }
