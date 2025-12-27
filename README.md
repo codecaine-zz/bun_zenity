@@ -2,6 +2,8 @@
 
 A fully-typed TypeScript wrapper for Zenity dialogs, providing an easy-to-use API for creating native desktop dialogs in your Bun applications.
 
+> **Python Version:** This is a TypeScript/Bun port of the original [Python Zenity Wrapper](https://github.com/codecaine-zz/python_zenity_wrapper). If you're working with Python, check out the original implementation!
+
 ## Prerequisites
 
 Install Zenity on your system:
