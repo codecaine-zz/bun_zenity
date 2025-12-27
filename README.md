@@ -296,12 +296,12 @@ See [ZENITY_API.md](./ZENITY_API.md) for complete API documentation with example
 
 ## Forms Collection
 
-The `FormCollection` class (`forms_collection.ts`) provides pre-built, developer-focused forms for common workflows. These forms combine multiple input types to collect structured data for various tasks.
+The `FormCollection` class (`demos/forms_collection.ts`) provides pre-built, developer-focused forms for common workflows. These forms combine multiple input types to collect structured data for various tasks.
 
 ### Running the Forms Collection Demo
 
 ```bash
-bun run forms_collection.ts
+bun demos/forms_collection.ts
 ```
 
 ### Available Forms
@@ -354,7 +354,7 @@ The collection includes 24+ ready-to-use forms organized by category:
 ### Usage Example
 
 ```typescript
-import { FormCollection } from './forms_collection';
+import { FormCollection } from './demos/forms_collection';
 
 const forms = new FormCollection();
 
