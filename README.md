@@ -98,6 +98,51 @@ if (result.button === 'ok' && result.values) {
 
 This change allows you to distinguish between Cancel and Extra button clicks, which was previously impossible.
 
+## Demos
+
+The `demos` directory contains TypeScript ports of the Python Zenity Wrapper demos. You can run any demo using `bun`:
+
+```bash
+bun demos/info_dialog.ts
+bun demos/simple_form.ts
+```
+
+### Available Demos
+
+#### Message Dialogs
+- `info_dialog.ts` - Information message
+- `warning_dialog.ts` - Warning message
+- `error_dialog.ts` - Error message
+- `question_dialog.ts` - Yes/No question
+
+#### Input Dialogs
+- `entry_dialog.ts` - Text input
+- `password_dialog.ts` - Password input
+- `scale_dialog.ts` - Slider/Scale
+- `calendar_dialog.ts` - Date picker
+
+#### Selection Dialogs
+- `list_dialog.ts` - Simple list selection
+- `checklist_dialog.ts` - Multiple selection checklist
+- `radiolist_dialog.ts` - Single selection radio list
+- `file_selection_dialog.ts` - File/Directory picker
+
+#### Progress Dialogs
+- `progress_dialog.ts` - Progress bars
+
+#### Text Dialogs
+- `text_dialog.ts` - Text viewer/editor
+
+#### Form Dialogs
+- `simple_form.ts` - Basic form with entry fields
+- `password_form.ts` - Login/Registration form
+- `multiline_form.ts` - Form with multiline text area
+- `calendar_form.ts` - Form with date picker
+- `combo_form.ts` - Form with dropdowns
+- `list_form.ts` - Form with list selection
+- `comprehensive_form.ts` - Form showcasing all field types
+
+
 
 ## Screenshots
 
